@@ -1,0 +1,14 @@
+---
+- hosts: dev
+  remote_user: root
+  become: yes
+  roles:
+    - role: oathkeeper-role
+      become: yes
+  vars:
+    oath_version: v0.38.9-beta.1
+    oath_install_path: /var/lib/oathkeeper
+    oath_service_user: root
+    oath_service_group: root
+    oath_proxy_port: 9500
+    oath_api_port: 9600

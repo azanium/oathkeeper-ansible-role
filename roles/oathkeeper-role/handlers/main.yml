@@ -1,0 +1,13 @@
+---
+# handlers file for oathkeeper
+- name: reload systemd
+  systemd:
+    daemon_reload: yes
+  become: yes
+
+- name: restart oathkeeper
+  systemd:
+    name: oathkeeper
+    enabled: yes
+    state: restarted
+  become: yes

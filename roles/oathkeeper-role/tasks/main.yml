@@ -1,0 +1,61 @@
+---
+# tasks file for oathkeeper
+- name: Check for existing Oathkeeper
+  stat:
+     path: '{{ oath_install_path }}'
+  changed_when: False
+  register: oath_binary
+#- when: not oath_binary.stat.exists
+ # block:
+- name: creating bin directory
+  ansible.builtin.file:
+    path: '{{ oath_install_path }}/bin'
+    state: directory
+    mode: '0755'
+- name: creating conf directory
+  ansible.builtin.file:
+    path: '{{ oath_install_path }}/conf'
+    state: directory
+    mode: '0755'
+- name: download oathkeeper
+  get_url: 
+    url: 'https://raw.githubusercontent.com/ory/oathkeeper/master/install.sh'
+    dest: '{{ oath_install_path }}/bin'
+    mode: 0755
+- name: install oathkeeper
+  become: yes
+  command: '{{ oath_install_path }}/bin/install.sh -b {{ oath_install_path }}/bin {{ oath_version }}'
+- name: cleanup install script
+  become: yes
+  file: 
+    path: '{{ oath_install_path }}/bin/install.sh'
+    state: absent
+- name: copying config.yml
+  template:
+    src: config.yaml.j2
+    dest: '{{ oath_install_path }}/conf/config.yaml'
+    owner: '{{ oath_service_user }}'
+    group: '{{ oath_service_group }}'
+    mode: 0644
+  become: yes
+- name: copying rules.json
+  template:
+    src: rules.json.j2
+    dest: '{{ oath_install_path }}/conf/rules.json'
+    owner: '{{ oath_service_user }}'
+    group: '{{ oath_service_group }}'
+    mode: 0644
+  become: yes
+- name: configure systemd
+  template: 
+    src: oathkeeper.service.j2
+    dest: /etc/systemd/system/oathkeeper.service
+    owner: '{{ oath_service_user }}'
+    group: '{{ oath_service_group }}'
+    mode: 0644
+  become: yes
+  notify:
+    - reload systemd
+    - restart oathkeeper
+
+- meta: flush_handlers

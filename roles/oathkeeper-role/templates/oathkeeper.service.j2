@@ -1,0 +1,14 @@
+[Unit]
+Description=Oathkeeper Service
+After=syslog.target network.target
+
+[Service]
+Type=idle
+User={{ oath_service_user }}
+Group={{ oath_service_group }}
+ExecStart={{ oath_install_path }}/bin/oathkeeper -c {{ oath_install_path }}/conf/config.yml serve
+TimeoutStartSec=600
+TimeoutStopSec=600
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,52 @@
+serve:
+  proxy:
+    port: {{ oath_proxy_port }}
+  api:
+    port: {{ oath_api_port }}
+
+access_rules:
+  repositories:
+    - file://{{ oath_install_path }}/conf/rules.json
+
+errors:
+  fallback:
+    - json
+  handlers:
+    json:
+      enabled: true
+      config:
+        verbose: true
+    redirect:
+      enabled: {{ oath_redirect_enabled }}
+      config:
+        to: {{ oath_redirect_url }}
+
+mutators:
+  header:
+    enabled: true
+    config:
+      headers:
+        X-User: "{% raw %}{{ print .Subject }}{% endraw %}"
+        # You could add some other headers, for example with data from the
+        # session.
+        # X-Some-Arbitrary-Data: "{% raw %}{{ print .Extra.some.arbitrary.data }}{% endraw %}"
+  noop:
+    enabled: {{ oath_noop_enabled }}
+  id_token:
+    enabled: true
+    config:
+      issuer_url: {{ oath_issuer_url }}
+      jwks_url: file://{{ oath_install_path }}/bin/jwks.json
+
+authorizers:
+  allow:
+    enabled: true
+  deny:
+    enabled: true
+
+authenticators:
+  anonymous:
+    enabled: true
+    config:
+      subject: guest
+
