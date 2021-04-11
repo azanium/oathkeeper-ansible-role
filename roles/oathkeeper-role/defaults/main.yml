@@ -20,4 +20,4 @@ oath_noop_enabled: true
 oath_issuer_url: http://localhost:9500/
 
 # rules
-oath_rule_match_url: http://<127.0.0.1|localhost|192.168.56.102>:9500/* 
+oath_rule_match_url: http://<127.0.0.1|localhost|192.168.56.102>:9500/<.*>

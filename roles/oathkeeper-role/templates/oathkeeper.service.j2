@@ -6,7 +6,7 @@ After=syslog.target network.target
 Type=idle
 User={{ oath_service_user }}
 Group={{ oath_service_group }}
-ExecStart={{ oath_install_path }}/bin/oathkeeper -c {{ oath_install_path }}/conf/config.yml serve
+ExecStart={{ oath_install_path }}/bin/oathkeeper -c {{ oath_install_path }}/conf/config.yaml serve
 TimeoutStartSec=600
 TimeoutStopSec=600
 
