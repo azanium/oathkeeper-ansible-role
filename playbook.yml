@@ -1,5 +1,5 @@
 ---
-- hosts: dev
+- hosts: gcp
   remote_user: root
   become: yes
   roles:
