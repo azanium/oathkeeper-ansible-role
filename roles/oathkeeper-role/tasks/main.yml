@@ -6,7 +6,10 @@
      path: '{{ oath_install_path }}'
   changed_when: False
   register: oath_binary
+
 - when: not oath_binary.stat.exists
+  tags: 
+    - oathkeeper_install
   block:
   - name: creating bin directory
     ansible.builtin.file:
@@ -31,6 +34,7 @@
     file: 
       path: '{{ oath_install_path }}/bin/install.sh'
       state: absent
+  
 - name: copying config.yml
   template:
     src: config.yaml.j2
@@ -39,6 +43,10 @@
     group: '{{ oath_service_group }}'
     mode: 0644
   become: yes
+  tags:
+    - oathkeeper_install
+    - oathkeeper_config
+
 - name: copying rules.json
   template:
     src: rules.json.j2
@@ -47,6 +55,10 @@
     group: '{{ oath_service_group }}'
     mode: 0644
   become: yes
+  tags:
+    - oathkeeper_install
+    - oathkeeper_rules
+
 - name: configure systemd
   template: 
     src: oathkeeper.service.j2
@@ -58,8 +70,17 @@
   become: yes
   notify:
     - reload systemd
+  tags:
+    - oathkeeper_install
+    - oathkeeper_restart
+
 - name: restart oathkeeper
   command: /bin/true
   notify: restart oathkeeper
+  tags:
+    - oathkeeper_install
+    - oathkeeper_restart
+    - oathkeeper_rules
+    - oathkeeper_config
 
 - meta: flush_handlers

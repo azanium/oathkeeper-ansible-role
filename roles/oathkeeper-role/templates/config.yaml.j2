@@ -54,3 +54,14 @@ authenticators:
     config:
       token_url: http://10.21.33.144/auth/realms/ElasticSearch/protocol/openid-connect/token
 
+  oauth2_introspection:
+    enabled: true
+    introspection_url: http://10.21.33.144/auth/realms/ElasticSearch/protocol/openid-connect/token/introspect
+    pre_authorization:
+        enabled: true
+        client_id: es-client
+        client_secret: be8c08ff-aa92-4585-aadf-f2d20f79de87
+        scope:
+          - introspect
+        token_url: http://10.21.33.144/auth/realms/ElasticSearch/protocol/openid-connect/token
+    
