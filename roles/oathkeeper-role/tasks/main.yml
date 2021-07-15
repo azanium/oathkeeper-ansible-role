@@ -59,6 +59,18 @@
     - oathkeeper_install
     - oathkeeper_rules
 
+- name: copying rules.yaml
+  template:
+    src: rules.yaml.j2
+    dest: '{{ oath_install_path }}/conf/rules.yaml'
+    owner: '{{ oath_service_user }}'
+    group: '{{ oath_service_group }}'
+    mode: 0644
+  become: yes
+  tags:
+    - oathkeeper_install
+    - oathkeeper_rules
+
 - name: configure systemd
   template: 
     src: oathkeeper.service.j2

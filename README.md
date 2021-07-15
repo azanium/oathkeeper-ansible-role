@@ -30,3 +30,8 @@ Authorization: Basic MjA4Z2thOTZnNXNqZ291djhqYWM4cmc2dnE6ZWN2dGY2dmZ2bHM1Mzd1cHV
 
 '
 k1142udf9du8tbl2vvfkh91un:6vdsc9r76nd64i4kitbdo56lf27c4hqagm95judcde7v5plg5hr
+
+{
+        "handler": "oauth2_client_credentials"
+      },
+      

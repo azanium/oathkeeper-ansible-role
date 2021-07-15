@@ -16,24 +16,17 @@
     },
     "authenticators": [
       {
-        "handler": "oauth2_client_credentials"
+        "handler": "oauth2_introspection"
       },
       {
-        "handler": "oauth2_introspection"
+        "handler": "oauth2_client_credentials"
       }
     ],
-    "authorizer": {
+    "authorizer": { 
       "handler": "allow"
     },
-    "mutators": [
-      {
-        "handler": "header",
-        "config": {
-          "headers": {
-            "X-User": "{% raw %}{{ print .Subject }}{% endraw %}"
-          }
-        }
-      }
-    ]
+    "mutators": [{
+      "handler": "noop"
+    }]
   }
 ]

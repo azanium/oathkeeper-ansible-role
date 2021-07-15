@@ -1,8 +1,14 @@
+
 serve:
   proxy:
     port: {{ oath_proxy_port }}
   api:
     port: {{ oath_api_port }}
+
+log:
+  leak_sensitive_values: true
+  format: text
+  level: debug
 
 access_rules:
   repositories:
@@ -22,21 +28,16 @@ errors:
         to: {{ oath_redirect_url }}
 
 mutators:
-  header:
-    enabled: true
-    config:
-      headers:
-        X-User: "{% raw %}{{ print .Subject }}{% endraw %}"
+  # header:
+  #  enabled: false
+  #  config:
+   #   headers:
+    #    X-User: "{% raw %}{{ print .Subject }}{% endraw %}"
         # You could add some other headers, for example with data from the
         # session.
         # X-Some-Arbitrary-Data: "{% raw %}{{ print .Extra.some.arbitrary.data }}{% endraw %}"
   noop:
     enabled: {{ oath_noop_enabled }}
-  id_token:
-    enabled: true
-    config:
-      issuer_url: {{ oath_issuer_url }}
-      jwks_url: file://{{ oath_install_path }}/bin/jwks.json
 
 authorizers:
   allow:
@@ -52,27 +53,29 @@ authenticators:
   oauth2_client_credentials:
     enabled: true
     config:
-      token_url: http://10.21.33.144/auth/realms/ElasticSearch/protocol/openid-connect/token
+      token_url: http://10.21.34.2:8080/auth/realms/ElasticSearch/protocol/openid-connect/token
   oauth2_introspection:
     enabled: true
     config:
-      introspection_url: http://10.21.33.144/auth/realms/ElasticSearch/protocol/openid-connect/token/introspect
+      introspection_url: http://10.21.34.2:8080/auth/realms/ElasticSearch/protocol/openid-connect/token/introspect
+      scope_strategy: exact
+      target_audience:
+        - es_client
+      required_scope:
+        - introspect
       pre_authorization:
-        enabled: true
+        enabled: false
         client_id: es-client
         client_secret: be8c08ff-aa92-4585-aadf-f2d20f79de87
         scope:
           - introspect
-        token_url: http://10.21.33.144/auth/realms/ElasticSearch/protocol/openid-connect/token
+        token_url: http://10.21.34.2:8080/auth/realms/ElasticSearch/protocol/openid-connect/token
+      introspection_request_headers:
+        x-forwarded-proto: http
+        Authorization: Basic ZXMtY2xpZW50OmJlOGMwOGZmLWFhOTItNDU4NS1hYWRmLWYyZDIwZjc5ZGU4Nw==
+      token_from:
+        header: Authorization
+      cache:
+        enabled: true
+        ttl: 120s
 
-  oauth2_introspection:
-    enabled: true
-    introspection_url: http://10.21.33.144/auth/realms/ElasticSearch/protocol/openid-connect/token/introspect
-    pre_authorization:
-        enabled: true
-        client_id: es-client
-        client_secret: be8c08ff-aa92-4585-aadf-f2d20f79de87
-        scope:
-          - introspect
-        token_url: http://10.21.33.144/auth/realms/ElasticSearch/protocol/openid-connect/token
-    
